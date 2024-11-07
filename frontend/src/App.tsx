@@ -1,33 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import axios from 'axios';
+import {useEffect, useState} from 'react'
+
+type User = {
+  id: string;
+  username: string;
+  password: string;
+  role: 'admin' | 'user';
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState<User | null>(null);
+  
+  useEffect(() => {
+    const fetchUserData = async (id: string) => {
+      try {
+        const response = await axios.get<User>(`http://localhost:3000/user/${id}`)
+        setUser(response.data)
+      } catch (err) {
+        console.error('Error fetching user data:', err)
+      }
+    }
+    fetchUserData('672cd146ee9660baa41fc51a')
+  },[])
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <h1>User Profile</h1>
+      <div>
+        <label>Username:</label>
+        <span>{user.username}</span>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div>
+        <label>Email:</label>
+        <span>{user.password}</span>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div>
+        <label>Role:</label>
+        <span>{user.role}</span>
+      </div>
+    </div>
     </>
   )
 }

@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const cors = require('cors')
 mongoose.connect('mongodb://127.0.0.1:27017/test');
 
 const userSchema = new mongoose.Schema({
@@ -19,6 +20,7 @@ const port = 3000
 const JWT_SECRET = 'mysecret'
 
 app.use(express.json());
+app.use(cors());
 
 const verifyToken = (req,res,next) => {
     const token = req.headers['authorization']?.split(' ')[1]
@@ -77,6 +79,23 @@ app.post('/login', async (req, res) => {
 app.post('/admin-only', verifyToken, authorize('admin'), (req,res) => {
     res.json({ message: 'This is an admin-only route' });
 })
+
+app.get('/user/:id', async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      res.json(user);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
