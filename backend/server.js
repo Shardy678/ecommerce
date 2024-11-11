@@ -1,4 +1,5 @@
 const express = require('express')
+const stripe = require('stripe')('sk_test_51QJuYEJj5OvhYSRkWyLYNnFEgCYqf60MzZgxBWyVk2TrCNsodSb9r0Q9wuq1Ac97GsPcRo2E7XvhkwjuGmIH57y100swAUZtXn');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const cors = require('cors')
@@ -18,6 +19,8 @@ kitty.save().then(() => console.log('meow'));
 const app = express()
 const port = 3000
 const JWT_SECRET = 'mysecret'
+
+const MY_DOMAIN = `http://localhost:${port}`;
 
 app.use(express.json());
 app.use(cors());
@@ -51,7 +54,7 @@ const authorize = (role) => (req, res, next) => {
   };  
   
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.redirect('/create-checkout-session');
 })
 
 app.post('/register', async (req, res) => {
@@ -76,6 +79,26 @@ app.post('/login', async (req, res) => {
     res.json({ token });
 })
 
+app.post('/create-checkout-session', async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price: 'price_1QJuoqJj5OvhYSRkn84gqupA',
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${MY_DOMAIN}/success`,
+      cancel_url: `${MY_DOMAIN}?canceled=true`,
+    });
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    res.status(500).json({ error: 'Failed to create checkout session' });
+  }
+});
+
 app.post('/admin-only', verifyToken, authorize('admin'), (req,res) => {
     res.json({ message: 'This is an admin-only route' });
 })
@@ -96,6 +119,10 @@ app.get('/user/:id', async (req, res) => {
     }
   });
   
+  app.get('/success', (req,res) => {
+    res.send('successfull!!!!')
+  })
+
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
