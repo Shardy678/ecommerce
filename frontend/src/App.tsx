@@ -5,6 +5,7 @@ import Cart from './Cart';
 import Login from './Login';
 import Profile from './Profile';
 import ProductList from './ProductList';
+import ProductSearch from './ProductSearch';
 
 type User = {
   id: string;
@@ -64,6 +65,7 @@ function App() {
       <Login/>
       <Profile/>
       <ProductList/>
+      <ProductSearch/>
     </>
   );
 }
