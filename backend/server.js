@@ -7,7 +7,6 @@ const User = require("./models/User");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 mongoose.connect("mongodb://127.0.0.1:27017/test");
-const Product = require("./models/Product");
 
 const Cat = mongoose.model("Cat", { name: String });
 
@@ -124,13 +123,23 @@ app.get("/success", (req, res) => {
 app.get("/products", async (req, res) => {
   try {
     const products = await stripe.products.list({});
-    res.json(products)
+    res.json(products);
   } catch (error) {
     console.error(error);
   }
 });
 
-// TODO implement stripe search
+app.get("/products/search/:name", async (req, res) => {
+  try {
+    const productName = req.params.name;
+    const products = await stripe.products.search({
+      query: `name:'${productName}'`,
+    });
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
