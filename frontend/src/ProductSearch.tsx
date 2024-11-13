@@ -8,24 +8,32 @@ interface Product {
 
 const ProductSearch: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [products, setProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchAllProducts = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/products/search/${searchTerm}`);
-        setProducts(response.data.data);
+        const response = await axios.get('http://localhost:3000/products');
+        setAllProducts(response.data.data);
       } catch (error) {
-        console.error('Error searching products:', error);
+        console.error('Error fetching products:', error);
       }
     };
 
+    fetchAllProducts();
+  }, []);
+
+  useEffect(() => {
     if (searchTerm.trim() !== '') {
-      fetchProducts();
+      const filtered = allProducts.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProducts(filtered);
     } else {
-      setProducts([]);
+      setFilteredProducts([]);
     }
-  }, [searchTerm]);
+  }, [searchTerm, allProducts]);
 
   return (
     <div>
@@ -35,11 +43,13 @@ const ProductSearch: React.FC = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <div>
-        {products.map((product) => (
-          <div key={product.id}>{product.name}</div>
-        ))}
-      </div>
+      {filteredProducts.length > 0 && (
+        <div>
+          {filteredProducts.map((product) => (
+            <div key={product.id}>{product.name}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
