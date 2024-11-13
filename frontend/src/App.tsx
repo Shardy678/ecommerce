@@ -2,6 +2,8 @@ import './App.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Cart from './Cart';
+import Login from './Login';
+import Profile from './Profile';
 
 type User = {
   id: string;
@@ -58,6 +60,8 @@ function App() {
       </div>
       <button onClick={() => handleSubmit('price_1QJuoqJj5OvhYSRkn84gqupA')}>Checkout</button>
       <Cart/>
+      <Login/>
+      <Profile/>
     </>
   );
 }
