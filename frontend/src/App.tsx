@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Cart from './Cart';
 import Login from './Login';
 import Profile from './Profile';
+import ProductList from './ProductList';
 
 type User = {
   id: string;
@@ -62,6 +63,7 @@ function App() {
       <Cart/>
       <Login/>
       <Profile/>
+      <ProductList/>
     </>
   );
 }
