@@ -1,6 +1,7 @@
 import './App.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import Cart from './Cart';
 
 type User = {
   id: string;
@@ -28,10 +29,9 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
+  const handleSubmit = async (priceId:string) => {
     try {
-      const response = await axios.post('http://localhost:3000/create-checkout-session');
+      const response = await axios.post('http://localhost:3000/create-checkout-session', {priceId});
       window.location.href = response.data.url;
     } catch (error) {
       console.error('Error:', error);
@@ -56,11 +56,8 @@ function App() {
           <span>{user.role}</span>
         </div>
       </div>
-      <form onSubmit={handleSubmit}> 
-        <button type='submit'>
-          Checkout
-        </button>
-      </form>
+      <button onClick={() => handleSubmit('price_1QJuoqJj5OvhYSRkn84gqupA')}>Checkout</button>
+      <Cart/>
     </>
   );
 }

@@ -81,10 +81,11 @@ app.post('/login', async (req, res) => {
 
 app.post('/create-checkout-session', async (req, res) => {
   try {
+    const {priceId} = req.body
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
-          price: 'price_1QJuoqJj5OvhYSRkn84gqupA',
+          price: priceId,
           quantity: 1,
         },
       ],
