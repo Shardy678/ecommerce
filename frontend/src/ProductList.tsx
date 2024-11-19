@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Badge } from "./components/ui/badge";
+import { Button } from "./components/ui/button";
 
 interface Product {
   id: string;
@@ -44,7 +46,6 @@ const ProductList = () => {
           "http://localhost:3000/products"
         );
         setProducts(response.data.data);
-        console.log(response.data.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -104,35 +105,50 @@ const ProductList = () => {
 
       setPrices(priceMap);
     };
-
-    if (products.length > 0) {
-      fetchPrices();
-    }
+    fetchPrices();
   }, [products]);
 
   if (loading) return <p>Loading products...</p>;
   if (error) return <p>Error fetching products: {error}</p>;
 
   return (
-    <div>
-      <h1 className="text-lg font-bold">Product List</h1>
-      <ul className="flex flex-row gap-5 mt-2">
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Product List</h1>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
-          <li key={product.id} className="border m-4 p-4">
-            <h2 className="font-bold">{product.name}</h2>
-            <p>{product.description || "No description"}</p>
-            <p>{product.metadata.category || "No category"}</p>
-            <p>Price: {prices[product.id] || "Loading..."}</p>
-            <button
-              onClick={() => handleSubmit(product.default_price)}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              disabled={!product.default_price}
-            >
-              Buy Now
-            </button>
-          </li>
+          <div
+            key={product.id}
+            className="border rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl"
+          >
+            <div className="p-6">
+              <Badge variant="secondary" className="mb-2">
+                <div className="mr-1">
+                  {product.metadata.category || "Uncategorized"}
+                </div>
+              </Badge>
+              <h2 className="text-xl font-bold mb-2">{product.name}</h2>
+              <p className="text-gray-600 mb-4">
+                {product.description || "No description"}
+              </p>
+              <div className="flex justify-between items-center">
+                <span className="text-2xl font-bold text-green-600">
+                  {product.default_price
+                    ? prices[product.id] || "Loading..."
+                    : "Price not available"}
+                </span>
+                <Button
+                  onClick={() => handleSubmit(product.default_price)}
+                  disabled={!product.default_price}
+                >
+                  Add to Cart
+                </Button>
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
