@@ -2,13 +2,18 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "./Context.tsx";
 import { AuthProvider } from "./AuthContext.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainPage from "./MainPage.tsx";
+import ProductPage from "./ProductPage.tsx";
 import './index.css'
+import MainPage from "./MainPage.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainPage/>,
+  },
+  {
+    path: "/products",
+    element: <ProductPage/>,
   },
   {
     path: "/success",

@@ -1,10 +1,15 @@
-import ProductList from "./ProductList";
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
+  const navigate = useNavigate(); 
+
+  const handleRedirect = () => {
+    navigate("/products"); 
+  };
   return (
     <>
-      <h1>My Shop</h1>
-      <ProductList/>
+      <div>Main Page</div>
+      <button className="hover:underline" onClick={handleRedirect}>Go to Products</button>
     </>
   );
 };
