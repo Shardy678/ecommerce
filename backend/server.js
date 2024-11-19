@@ -79,6 +79,7 @@ app.post("/create-checkout-session", async (req, res) => {
   try {
     const { priceId } = req.body;
     const session = await stripe.checkout.sessions.create({
+      success_url: 'http://localhost:5173/success',
       line_items: [
         {
           price: priceId,
@@ -86,8 +87,7 @@ app.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${MY_DOMAIN}/success`,
-      cancel_url: `${MY_DOMAIN}?canceled=true`,
+      cancel_url: `http://localhost:5173`,
     });
     res.json({ url: session.url });
   } catch (error) {
@@ -138,6 +138,18 @@ app.get("/products/search/:name", async (req, res) => {
     res.json(products);
   } catch (error) {
     console.error(error);
+  }
+});
+
+app.get('/prices/:priceId', async (req, res) => {
+  const { priceId } = req.params;
+
+  try {
+    const price = await stripe.prices.retrieve(priceId);
+    res.json(price);
+  } catch (error) {
+    console.error("Error retrieving price:", error);
+    res.status(500).json({ error: 'Failed to retrieve price' });
   }
 });
 
